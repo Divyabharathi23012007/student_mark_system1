@@ -1,6 +1,6 @@
 # 🎓 Student Mark System
 
-> React · Spring Boot · MySQL — with Java Thread Threat Simulation
+> React · Go (Gin) · MySQL — with Java Thread Threat Simulation
 
 ---
 
@@ -8,17 +8,17 @@
 
 ```
 student-mark-system/
-├── backend/               ← Spring Boot (Java 17)
-│   ├── pom.xml
-│   └── src/main/
-│       ├── java/com/studentmarks/
-│       │   ├── StudentMarksApplication.java
-│       │   ├── controller/StudentController.java
-│       │   ├── model/Student.java
-│       │   ├── repository/StudentRepository.java
-│       │   └── service/StudentService.java
-│       └── resources/
-│           └── application.properties
+|   backend/               Go (Gin Framework)
+|   |   go.mod
+|   |   cmd/
+|   |   |   main.go
+|   |   models/
+|   |   |   student.go
+|   |   handlers/
+|   |   |   student_handler.go
+|   |   |   mark_handler.go
+|   |   config/
+|   |   |   database.go
 ├── frontend/              ← React (Node 18+)
 │   ├── package.json
 │   └── src/
@@ -45,19 +45,24 @@ student-mark-system/
 
 ---
 
-### Step 2 — Backend (Spring Boot)
+### Step 2 — Backend (Go)
 
 1. Open **VS Code**
-2. Install the **Extension Pack for Java** from the Extensions marketplace (if not installed)
+2. Install the **Go extension** from the Extensions marketplace (if not installed)
 3. Open the `backend/` folder: `File → Open Folder → student-mark-system/backend`
-4. Edit `src/main/resources/application.properties`:
+4. Edit `config/database.go` and update the DSN string with your MySQL credentials:
+   ```go
+   dsn := "user:password@tcp(localhost:3306)/student_marks?charset=utf8mb4&parseTime=True&loc=Local"
    ```
-   spring.datasource.password=your_actual_mysql_password
+5. Install dependencies:
+   ```bash
+   go mod tidy
    ```
-5. Run the application:
-   - Click the `▶ Run` button above the `main()` method in `StudentMarksApplication.java`
-   - OR use the terminal: `./mvnw spring-boot:run`
-6. You should see: `Started StudentMarksApplication on port 8080`
+6. Run the application:
+   ```bash
+   go run cmd/main.go
+   ```
+7. You should see: `Server starting on port 8080...`
 
 **Test it:**
 Open browser → `http://localhost:8080/api/students` — you should see JSON data.
@@ -77,20 +82,20 @@ Open browser → `http://localhost:8080/api/students` — you should see JSON da
 
 ---
 
-## ⚡ Thread Threats
+##  Thread Threats
 
-### Threat 1 — Auto-Delete
+### Threat 1  Auto-Delete
 - Fill in student name, subject, mark
-- Click **"Threat 1 — Insert & Auto-Delete"**
+- Click **"Threat 1  Insert & Auto-Delete"**
 - Record appears in the table
-- After **2 seconds**, a background Java thread deletes the record
+- After **2 seconds**, a background goroutine deletes the record
 - Watch the table auto-refresh every 3 seconds
 
-### Threat 2 — Mark Manipulation
+### Threat 2  Mark Manipulation
 - Fill in student name, subject, mark
-- Click **"Threat 2 — Insert & Manipulate Mark"**
+- Click **"Threat 2  Insert & Manipulate Mark"**
 - Record appears with original mark
-- After **2 seconds**, a background Java thread **halves the mark**
+- After **2 seconds**, a background goroutine **halves the mark**
 - Watch the mark change in the table
 
 ---
@@ -130,8 +135,13 @@ Make sure your phone and PC are on the **same WiFi network**.
 | POST   | /api/students | Add student (normal) |
 | PUT    | /api/students/{id} | Update student |
 | DELETE | /api/students/{id} | Delete student |
-| POST   | /api/students/threat1 | Insert + auto-delete via thread |
-| POST   | /api/students/threat2 | Insert + manipulate mark via thread |
+| GET    | /api/marks | Get all marks |
+| GET    | /api/marks/student/{studentId} | Get marks for specific student |
+| POST   | /api/marks | Add mark |
+| PUT    | /api/marks/{id} | Update mark |
+| DELETE | /api/marks/{id} | Delete mark |
+| POST   | /api/students/threat1 | Insert + auto-delete via goroutine |
+| POST   | /api/students/threat2 | Insert + manipulate mark via goroutine |
 
 ---
 
@@ -139,15 +149,13 @@ Make sure your phone and PC are on the **same WiFi network**.
 
 | Tool | Version |
 |------|---------|
-| Java | 17+ |
-| Maven | 3.8+ (bundled in Spring Boot) |
+| Go | 1.21+ |
 | Node.js | 18+ |
 | MySQL | 8.0+ |
 | VS Code | Any recent version |
 
 **VS Code Extensions recommended:**
-- Extension Pack for Java
-- Spring Boot Extension Pack
+- Go (official Go extension)
 - ES7+ React/Redux/React-Native snippets
 
 ---
@@ -156,12 +164,13 @@ Make sure your phone and PC are on the **same WiFi network**.
 
 **Backend won't start:**
 - Check MySQL is running
-- Check password in `application.properties`
-- Make sure `student_marks_db` database exists
+- Check database credentials in `config/database.go`
+- Make sure `student_marks` database exists
+- Run `go mod tidy` to install dependencies
 
 **Frontend can't reach backend:**
-- Ensure Spring Boot is running on port 8080
-- Check browser console for CORS errors (should not happen — CORS is enabled)
+- Ensure Go server is running on port 8080
+- Check browser console for CORS errors (should not happen  CORS is enabled)
 
 **Mobile can't reach backend:**
 - Ensure phone and PC are on the same WiFi

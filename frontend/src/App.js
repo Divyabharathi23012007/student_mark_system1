@@ -100,7 +100,7 @@ function App() {
             <span className="header-icon">🎓</span>
             <div>
               <h1>Student Mark System</h1>
-              <p>React · Spring Boot · MySQL</p>
+              <p>React · Golang · MySQL</p>
             </div>
           </div>
           <div className="header-stats">
