@@ -1,0 +1,5 @@
+com\studentmarks\service\StudentService.class
+com\studentmarks\StudentMarksApplication.class
+com\studentmarks\model\Student.class
+com\studentmarks\repository\StudentRepository.class
+com\studentmarks\controller\StudentController.class
